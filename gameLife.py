@@ -328,8 +328,8 @@ class grid:
 
 
 def getCellPressed(myPivot,mouse,size):
-    xDelta = (mouse[0]-myPivot.coord[0])/size
-    yDelta = (mouse[1]-myPivot.coord[1])/size
+    xDelta = (mouse[0]-7-myPivot.coord[0])/size
+    yDelta = (mouse[1]-10-myPivot.coord[1])/size
 
     x = int(myPivot.mainCell.x + xDelta)
     y = int(myPivot.mainCell.y - yDelta)
