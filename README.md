@@ -1,1 +1,1 @@
-# GameLift
+# GameLife
