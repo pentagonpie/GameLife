@@ -431,7 +431,8 @@ for aCell in cells:
 play = False
 
 
-drag = False
+dragMove = False
+dragDraw = False
 timer = 0
 screen = pygame.display.set_mode((sizeX,sizeY))
 clock = pygame.time.Clock()
@@ -481,10 +482,11 @@ while not done:
                 else:
                     start = mouse
                     myPivot.updateCenterCoord()
-                    drag = True
+                    dragMove = True
 
         #Right click is for drawing cells
             elif event.button == RIGHT:
+                dragDraw=True
                 #cannot draw when mouse on button
                 if not pressedButton(buttons,mouse):
                     mouse = pygame.mouse.get_pos()
@@ -492,12 +494,21 @@ while not done:
                     mygrid.add(pressedCell)
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
-            drag = False
+            dragMove = False
             myPivot.transformPivot(mygrid.size)
 
-        if event.type == MOVE_EVENT and drag:
+        if event.type == pygame.MOUSEBUTTONUP and event.button == RIGHT:
+            dragDraw = False
+            
+
+        if event.type == MOVE_EVENT and dragMove:
             end = pygame.mouse.get_pos()
             myPivot.move(start,end, mygrid.size)
+
+        if event.type == MOVE_EVENT and dragDraw:
+            mouse = pygame.mouse.get_pos()
+            pressedCell = getCellPressed(myPivot,mouse,mygrid.size)
+            mygrid.add(pressedCell)
 
         if event.type == UPDATE_EVENT and play:
             mygrid.update()
