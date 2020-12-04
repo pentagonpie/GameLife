@@ -10,6 +10,7 @@ class selectable:
         self.visible = visible
         self.interact = interact
         self.value = 1
+        self.fontSize = 25
 
     def changeColor(self,color):
         self.color=color
@@ -24,7 +25,7 @@ class selectable:
 
         pygame.draw.rect(screen,self.color,[self.location[0], self.location[1], self.size[0],self.size[1]]) 
         # defining a font 
-        smallfont = pygame.font.SysFont('Corbel',25) 
+        smallfont = pygame.font.SysFont('Corbel',self.fontSize) 
         textColor = (245,244,240)
         # rendering a text written in 
         # this font 

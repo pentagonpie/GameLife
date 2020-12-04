@@ -195,8 +195,8 @@ def printScreen(screen,sizeX,sizeY,aGrid,thePivot,buttons):
             aCell.draw(screen,location, movement)
 
     #Temporary, only to show the pivot location for debugging
-    pygame.draw.line(screen,color2,(0,thePivot.coord[1]),    (sizeX,thePivot.coord[1]),3)
-    pygame.draw.line(screen,color2,(thePivot.coord[0],0), (thePivot.coord[0],sizeY),3)
+    #pygame.draw.line(screen,color2,(0,thePivot.coord[1]),    (sizeX,thePivot.coord[1]),3)
+    #pygame.draw.line(screen,color2,(thePivot.coord[0],0), (thePivot.coord[0],sizeY),3)
 
     for aButton in buttons:
         if aButton.visible:
@@ -230,7 +230,10 @@ class grid:
     #list of living cells in grid, each one in the form (x,y) where x and y are integer number,positive or negative
     def __init__(self):
         self.cells = set()
-        self.size = 25
+        self.size = 20
+        self.biggestSize = 35
+        self.smallestSize = 10
+        self.jumpsSize = 5
 
     def add(self,aCell):
         self.cells.add(aCell)
@@ -245,7 +248,6 @@ class grid:
         self.size = newSize
 
     def update(self):
-        startTime = time.time()
         toRemove = self.ruleDying()
         toAdd = self.ruleBorn()
         pop = self.cells.discard
@@ -259,7 +261,15 @@ class grid:
             push(x)
             
 
-        return time.time() - startTime
+
+    def zoom(self,zoomIn):
+        if zoomIn:
+            if self.size<self.biggestSize:
+                self.changeSize(self.size+self.jumpsSize)
+        else:
+            if self.size>self.smallestSize:
+                self.changeSize(self.size-self.jumpsSize)
+
 
 
 
@@ -390,6 +400,15 @@ def gliderGun():
     cells.append(cell(-8,-2))
     return cells
 
+def pressedButton(buttons,mouse):
+    for button in buttons:
+        if button.collidePoint(mouse):
+            return True
+
+    return False
+
+
+
 
 pygame.init()
 sizeX=700
@@ -422,8 +441,17 @@ pygame.time.set_timer(UPDATE_EVENT, 100)
 buttons = []
 
 color1=(74,140,240)
-buttonPlay = button(color1, [sizeX-100,sizeY-100], [90,50], "Play")
+buttonPlay = button(color1, [sizeX-100,sizeY-100], [65,50], "Play")
+buttonZoomIn = button(color1, [sizeX-80,sizeY-150], [45,35], "+")
+buttonZoomIn.fontSize=35
+buttonZoomOut = button(color1, [sizeX-80,sizeY-200], [45,35], "-")
+buttonZoomOut.fontSize=35
+
+
+
 buttons.append(buttonPlay)
+buttons.append(buttonZoomIn)
+buttons.append(buttonZoomOut)
 
 LEFT = 1
 RIGHT = 3
@@ -443,6 +471,13 @@ while not done:
                     play = not play
                     pressPlay(buttonPlay)
 
+
+                elif buttonZoomIn.collidePoint(mouse):
+                    mygrid.zoom(True)
+                    
+                elif buttonZoomOut.collidePoint(mouse):
+                    mygrid.zoom(False)
+
                 else:
                     start = mouse
                     myPivot.updateCenterCoord()
@@ -451,7 +486,7 @@ while not done:
         #Right click is for drawing cells
             elif event.button == RIGHT:
                 #cannot draw when mouse on button
-                if not buttonPlay.collidePoint(mouse):
+                if not pressedButton(buttons,mouse):
                     mouse = pygame.mouse.get_pos()
                     pressedCell = getCellPressed(myPivot,mouse,mygrid.size)
                     mygrid.add(pressedCell)
