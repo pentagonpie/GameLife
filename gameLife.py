@@ -108,12 +108,14 @@ class pivot:
         oldX = self.coord[0]
         oldY = self.coord[1]
 
-        print("coor before movement are ", self.coord[0],",",self.coord[1])
+
+        #Default of jumps for both x,y are zero, if we get out of center screen will need to update those
         jumpsY = 0
         jumpsX = 0
         needChange=False
-        print("oldX=",oldX,"oldY=",oldY)
 
+
+        #Check if coordinates get out of center range
         if oldX > maxX or oldX < minX:
             needChange=True
             if oldX > maxX:
@@ -131,6 +133,7 @@ class pivot:
                 jumpsX += 2
 
 
+        #Check if coordinates get out of center range
         if oldY > maxY or oldY < minY:
             needChange=True
             if oldY > maxY:
@@ -153,19 +156,12 @@ class pivot:
             x = oldX+jumpsX*size
             #Y is inverted in pygame
             y = oldY+jumpsY*size
-
-
-            print("jumpx = ", jumpsX, ", jumpY=", jumpsY)
             #New values of pivot
             x1 = int(self.mainCell.x+jumpsX)
             y1 = int(self.mainCell.y -jumpsY)
 
-
             self.updateCoord([x,y])
             self.changeCell(cell(x1,y1))
-            print("changing coord to {},{}".format(self.coord[0],self.coord[1]))
-            print("updating cell of pivot {},{}".format(self.mainCell.x,self.mainCell.y))
-            print("\n\n")
 
         
 
