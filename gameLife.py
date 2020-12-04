@@ -90,37 +90,82 @@ class pivot:
         yDelta = end[1]-start[1]
         #print("moving pivot by {} and {}".format(xDelta,yDelta))
         self.coordMove(xDelta,yDelta)
-
         
-        self.transformPivot(size)
-        
+    #Function to update the pivot cell when he moves from center of screen to a new pivot in the center
     def transformPivot(self,size):
-
-        limit = 60
+        print("calling transformPivot")
+        limit = 120
         global sizeX
         global sizeY
 
         centerX = sizeX/2
         centerY = sizeY/2
+        maxX = centerX+limit
+        maxY = centerY+limit
+        minX = centerX-limit
+        minY = centerY-limit
 
-        deltaX = self.coord[0]-centerX
-        deltaY = self.coord[1]-centerY
+        oldX = self.coord[0]
+        oldY = self.coord[1]
 
-        x = self.coord[0]-deltaX
-        y = self.coord[1] -deltaY
+        print("coor before movement are ", self.coord[0],",",self.coord[1])
+        jumpsY = 0
+        jumpsX = 0
+        needChange=False
+        print("oldX=",oldX,"oldY=",oldY)
+
+        if oldX > maxX or oldX < minX:
+            needChange=True
+            if oldX > maxX:
+                deltaX = maxX-oldX
+            elif oldX<minX:
+                #positive jump
+                deltaX = minX-oldX
+            else:
+                deltaX=0
+
+            jumpsX = (deltaX)//size
+            if jumpsX<0:
+                jumpsX += -2
+            else:
+                jumpsX += 2
 
 
-        x1 = int(self.mainCell.x-(deltaX/size))
-        y1 = int(self.mainCell.y -(deltaY/size))
+        if oldY > maxY or oldY < minY:
+            needChange=True
+            if oldY > maxY:
+                deltaY = maxY-oldY
+            elif oldY<minY:
+                #positive jump
+                deltaY = minY-oldY
+            else:
+                deltaY = 0
+
+            jumpsY = (deltaY)//size
+            if jumpsY<0:
+                jumpsX += -2
+            else:
+                jumpsY += 2
 
 
-        
+        if needChange:
+            #New coordinates of pivot
+            x = oldX+jumpsX*size
+            #Y is inverted in pygame
+            y = oldY+jumpsY*size
 
-        if self.coord[0] > limit or self.coord[0] < -limit or self.coord[1] > limit or self.coord[1] < -limit:
+
+            print("jumpx = ", jumpsX, ", jumpY=", jumpsY)
+            #New values of pivot
+            x1 = int(self.mainCell.x+jumpsX)
+            y1 = int(self.mainCell.y -jumpsY)
+
+
             self.updateCoord([x,y])
             self.changeCell(cell(x1,y1))
             print("changing coord to {},{}".format(self.coord[0],self.coord[1]))
             print("updating cell of pivot {},{}".format(self.mainCell.x,self.mainCell.y))
+            print("\n\n")
 
         
 
@@ -133,9 +178,10 @@ def printScreen(screen,sizeX,sizeY,aGrid,thePivot,buttons):
     screen.fill((241,248,242))
     offset = 120
     color = (130, 12, 255)
+    color2 = (230, 60, 90)
     thickness = 2
     size = int(sizeX/movement)
-    amount = size
+    amount = size*3
 
     #Vertical lines
     for x in range(-amount,amount):
@@ -149,9 +195,12 @@ def printScreen(screen,sizeX,sizeY,aGrid,thePivot,buttons):
 
     for aCell in aGrid.getCells():
         location = computeCoord(thePivot,aCell,movement)
-        if insideScreen(location,sizeX,sizeY):
+        if insideScreen(location,sizeX,sizeY,movement):
             aCell.draw(screen,location, movement)
 
+    #Temporary, only to show the pivot location for debugging
+    pygame.draw.line(screen,color2,(0,thePivot.coord[1]),    (sizeX,thePivot.coord[1]),3)
+    pygame.draw.line(screen,color2,(thePivot.coord[0],0), (thePivot.coord[0],sizeY),3)
 
     for aButton in buttons:
         if aButton.visible:
@@ -159,16 +208,17 @@ def printScreen(screen,sizeX,sizeY,aGrid,thePivot,buttons):
 
     #pygame.draw.rect(screen, boldColor, [movement,44,sizeX-offset*2+55,movement*9+5],5)
 
-
-def insideScreen(coord,sizeX,sizeY):
-    if coord[0] > sizeX or coord[0] <0:
+#Returns true if coordinates are inside window
+def insideScreen(coord,sizeX,sizeY,size):
+    #Check if x,y values are bigger than screen size,or smaller than begining of screen minus cell size
+    if coord[0] > sizeX or coord[0] <-size:
         return False
-    if coord[1] > sizeY or coord[1] <0:
+    if coord[1] > sizeY or coord[1] <-size:
         return False
 
     return True
         
-
+#Function used to compute the coordinates of a living cell in the grid relative to a pivot cell
 def computeCoord(aPivot,aCell,size):
     border = 2
     xDelta = (aCell.x-aPivot.mainCell.x)*size
@@ -412,6 +462,7 @@ while not done:
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == LEFT:
             drag = False
+            myPivot.transformPivot(mygrid.size)
 
         if event.type == MOVE_EVENT and drag:
             end = pygame.mouse.get_pos()
