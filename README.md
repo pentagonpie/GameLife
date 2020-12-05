@@ -1,6 +1,8 @@
 # GameLife
 A simulation of Conway's Game of Life
 Features include:
+
+
 Zoom in and out
 
 
