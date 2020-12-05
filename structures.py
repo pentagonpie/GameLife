@@ -15,6 +15,7 @@ class selectable:
     def changeColor(self, color):
         self.color = color
 
+    # Check if current selectable was pressed with mouse
     def collidePoint(self, aPoint):
         if aPoint[0] > self.location[0] and aPoint[0] < self.location[0] + self.size[0]:
             if (
@@ -24,6 +25,7 @@ class selectable:
                 return True
         return False
 
+    # Draw method of every button
     def draw(self, screen):
 
         pygame.draw.rect(

@@ -18,6 +18,7 @@ class cell:
         else:
             return False
 
+    # Get all neighbors of current cell
     def getClose(self):
         near = []
         near.append(cell(self.x, self.y - 1))
@@ -41,7 +42,11 @@ class cell:
         )
 
 
+# pivot in a sense is the only 'real' cell in the screen, we keep track of its coordinates, and all other objects are drawn
+# relative to him
 class pivot:
+    # coordinates are the x,y coordinates of the physical screen
+    # Cell is the cell in the grid, center is (0,0), to his right is (1,0)
     def __init__(self, coord, aCell, sizeX, sizeY):
         self.mainCell = aCell
         self.coord = [int(coord[0]), int(coord[1])]
@@ -52,6 +57,7 @@ class pivot:
     def __str__(self):
         return "({},{})".format(self.mainCell.x, self.mainCell.y)
 
+    # Update the main cell of pivot because movement from user with mouse
     def changeCell(self, aCell):
         self.mainCell = aCell
 
@@ -167,6 +173,7 @@ class grid:
     def changeSize(self, newSize):
         self.size = newSize
 
+    # Main method to control what happens at every tick of time in the simulation
     def update(self):
         toRemove = self.ruleDying()
         toAdd = self.ruleBorn()
@@ -179,6 +186,7 @@ class grid:
         for x in toAdd:
             push(x)
 
+    # Change size of cells within limits
     def zoom(self, zoomIn):
         if zoomIn:
             if self.size < self.biggestSize:
@@ -187,6 +195,7 @@ class grid:
             if self.size > self.smallestSize:
                 self.changeSize(self.size - self.jumpsSize)
 
+    # Controls which new cells are born in this time
     def ruleBorn(self):
         born = []
         bornPush = born.append
@@ -212,9 +221,7 @@ class grid:
 
         return born
 
-    def exists(self, aCell):
-        pass
-
+    # Get all surronding cells that are alive
     def getNeighbors(self, aCell):
         allNear = aCell.getClose()
         amount = 0
@@ -224,6 +231,7 @@ class grid:
                 amount += 1
         return amount
 
+    # Controls which cells from the current living will die this time
     def ruleDying(self):
         died = []
         diedPush = died.append

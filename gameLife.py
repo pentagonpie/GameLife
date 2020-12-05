@@ -9,6 +9,7 @@ from framework import cell
 import shapes
 
 
+# Main method to draw the screen at every frame
 def printScreen(screen, sizeX, sizeY, aGrid, thePivot, buttons):
 
     movement = aGrid.size
@@ -120,9 +121,11 @@ cells = shapes.gliderGun()
 
 mygrid = grid()
 mygrid.changeSize(15)
+# pivot in a sense is the only 'real' cell in the screen, we keep track of its coordinates, and all other objects are drawn
+# relative to him
 myPivot = pivot((sizeX / 2, sizeY / 2), cell(0, 0), sizeX, sizeY)
 
-
+# Set default starting grid
 for aCell in cells:
     mygrid.add(aCell)
 
@@ -140,6 +143,7 @@ UPDATE_EVENT = pygame.USEREVENT + 1
 pygame.time.set_timer(UPDATE_EVENT, 100)
 buttons = []
 
+# Adding buttons to buttons container
 color1 = (74, 140, 240)
 buttonPlay = button(color1, [sizeX - 100, sizeY - 100], [65, 50], "Play")
 buttonZoomIn = button(color1, [sizeX - 80, sizeY - 150], [45, 35], "+")
@@ -152,10 +156,15 @@ buttons.append(buttonPlay)
 buttons.append(buttonZoomIn)
 buttons.append(buttonZoomOut)
 
+# Set values for left and right mouse click
 LEFT = 1
 RIGHT = 3
+
+# Get location of mouse every time MOVE_EVENT occurs
 MOVE_EVENT = pygame.USEREVENT + 2
 pygame.time.set_timer(MOVE_EVENT, 70)
+
+
 done = False
 while not done:
     for event in pygame.event.get():
