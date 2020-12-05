@@ -2,6 +2,8 @@
 A simulation of Conway's Game of Life
 Features include:
 Zoom in and out
+
+
 ![](gifs/zoom_demo.gif)
 
 Pause and play the game
