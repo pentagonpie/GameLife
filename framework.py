@@ -87,7 +87,6 @@ class pivot:
 
     # Function to update the pivot cell when he moves from center of screen to a new pivot in the center
     def transformPivot(self, size):
-        print("calling transformPivot")
         limit = 120
 
         centerX = self.sizeX / 2
