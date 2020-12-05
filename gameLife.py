@@ -3,9 +3,10 @@ import random
 from datetime import datetime
 import time
 from structures import button
-from shapes import grid
-from shapes import pivot
-from shapes import cell
+from framework import grid
+from framework import pivot
+from framework import cell
+import shapes
 
 
 def printScreen(screen, sizeX, sizeY, aGrid, thePivot, buttons):
@@ -80,6 +81,7 @@ def computeCoord(aPivot, aCell, size):
     return (x, y)
 
 
+# from mouse click position get the values of the cell that was at that location
 def getCellPressed(myPivot, mouse, size):
     xDelta = (mouse[0] - 7 - myPivot.coord[0]) / size
     yDelta = (mouse[1] - 10 - myPivot.coord[1]) / size
@@ -98,63 +100,7 @@ def pressPlay(button):
         button.text = "Pause"
 
 
-def getRandomCells():
-    limit = 27
-    cells = []
-    for x in range(400):
-        x = random.choice(range(-limit, limit))
-        y = random.choice(range(-limit, limit))
-        cells.append(cell(x, y))
-        # print("created random cell {},{}".format(x,y))
-
-    return cells
-
-
-def gliderGun():
-    cells = []
-    cells.append(cell(17, 2))
-    cells.append(cell(17, 1))
-    cells.append(cell(16, 2))
-    cells.append(cell(16, 1))
-
-    cells.append(cell(-17, 1))
-    cells.append(cell(-17, 0))
-    cells.append(cell(-18, 1))
-    cells.append(cell(-18, 0))
-
-    cells.append(cell(6, 3))
-    cells.append(cell(6, 4))
-    cells.append(cell(6, -1))
-    cells.append(cell(6, -2))
-    cells.append(cell(4, 3))
-    cells.append(cell(4, -1))
-
-    cells.append(cell(3, 2))
-    cells.append(cell(3, 1))
-    cells.append(cell(3, 0))
-    cells.append(cell(2, 2))
-    cells.append(cell(2, 1))
-    cells.append(cell(2, 0))
-
-    cells.append(cell(-1, -1))
-    cells.append(cell(-2, 0))
-    cells.append(cell(-2, -1))
-    cells.append(cell(-2, -2))
-    cells.append(cell(-3, 1))
-    cells.append(cell(-3, -3))
-    cells.append(cell(-4, -1))
-    cells.append(cell(-5, 2))
-    cells.append(cell(-5, -4))
-    cells.append(cell(-6, 2))
-    cells.append(cell(-6, -4))
-    cells.append(cell(-7, 1))
-    cells.append(cell(-7, -3))
-    cells.append(cell(-8, 0))
-    cells.append(cell(-8, -1))
-    cells.append(cell(-8, -2))
-    return cells
-
-
+# Check if any button was pressed
 def pressedButton(buttons, mouse):
     for button in buttons:
         if button.collidePoint(mouse):
@@ -164,11 +110,12 @@ def pressedButton(buttons, mouse):
 
 
 pygame.init()
+pygame.display.set_caption("Game Of Life")
 sizeX = 700
 sizeY = 700
 
 
-cells = gliderGun()
+cells = shapes.gliderGun()
 
 
 mygrid = grid()
