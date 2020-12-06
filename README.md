@@ -1,6 +1,9 @@
 # GameLife
 A simulation of Conway's Game of Life
+
 Writen in Python using the pygame library
+
+
 Features include:
 
 
